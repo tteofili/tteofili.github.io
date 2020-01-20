@@ -1,6 +1,6 @@
 
-# Reduce embeddings dimensiolaity using "Simple and Effective Dimensionality Reduction for Word Embeddings"
-> Use algorithm proposed in "Simple and Effective Dimensionality Reduction for Word Embeddings" paper to reduce dimensiolaity of word embeddings
+# Reduce embeddings dimensionality using "Simple and Effective Dimensionality Reduction for Word Embeddings"
+> Use algorithm proposed in "Simple and Effective Dimensionality Reduction for Word Embeddings" paper to reduce dimensionality of word embeddings
 
 Post processing algorithm (ppa)
 

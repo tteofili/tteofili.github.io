@@ -2,6 +2,8 @@
 # Reduce embeddings dimensionality using "Simple and Effective Dimensionality Reduction for Word Embeddings"
 > Use algorithm proposed in "Simple and Effective Dimensionality Reduction for Word Embeddings" paper to reduce dimensionality of word embeddings
 
+Post process embeddings using "Simple and Effective Dimensionality Reduction for Word Embeddings"
+
 Post processing algorithm (ppa)
 
 ```python
@@ -9,15 +11,23 @@ from sklearn.decomposition import PCA
 import copy
 import numpy as np
 
-def ppa(embedding_matrix_orig, n_components):
-    pca = PCA(n_components=n_components)
-    embedding_matrix = copy.deepcopy(embedding_matrix_orig)
-    temp = embedding_matrix - np.average(embedding_matrix, axis=0)
-    principalComponents = pca.fit_transform(temp)
-    principalAxes = pca.components_
-    toSubstract = np.matmul(np.matmul(embedding_matrix, principalAxes.T), principalAxes)
-    processed = embedding_matrix - toSubstract
-    return processed
+def ppa(X_train, n_components):
+    # PCA to get top components
+    pca =  PCA(n_components = n_components)
+    X_train = X_train - np.mean(X_train)
+    X_fit = pca.fit_transform(X_train)
+    U1 = pca.components_
+    
+    z = []
+
+    # removing projections on top components
+    for i, x in enumerate(X_train):
+        for u in U1[0:7]:        
+            x = x - np.dot(u.transpose(),x) * u 
+        z.append(x)
+
+    z = np.asarray(z)
+    return z
 ```
 
 Use Gensim to get the pretrained GoogleNews word2vec model
@@ -43,7 +53,7 @@ dim = 8
 Run ppa, PCA and ppa again with the target dimensionality
 
 ```python
-reduced = ppa(weights, n_components = 300)
+reduced = ppa(weights, weights.shape[1])
 ```
 
 ```python
@@ -53,7 +63,7 @@ principalComponents = pca.fit_transform(reduced)
 ```
 
 ```python
-reduced = ppa(principalComponents, n_components = dim)
+reduced = ppa(principalComponents, dim)
 ```
 
 Create a new model, identical to the original one, but with the reduced weights
@@ -73,16 +83,16 @@ outv.most_similar(positive="man", topn=10)
 
 
 
-    [('Miki_Otomo', 0.9952907562255859),
-     ('possible.The', 0.9908273220062256),
-     ('Goa_Kamat', 0.9899711608886719),
-     ('Hensyel', 0.9896929264068604),
-     ('Destination_PEACE', 0.9877277612686157),
-     ('Peteraf', 0.9874942302703857),
-     ('Gaoganediwe', 0.9873812198638916),
-     ('Islamofascism_Awareness_Week', 0.9869686365127563),
-     ('Balla_Keita', 0.985584557056427),
-     ('Nasdaq_AUTH', 0.9855645895004272)]
+    [('Defenseman_Anssi_Salmela', 1.0),
+     ('Castle_Rushen_High', 1.0),
+     ('Orb_Audio', 1.0),
+     ('Lija_Athletic', 1.0),
+     ('Iosefa_Tekori', 1.0),
+     ('multiton', 1.0),
+     ('Livno', 1.0),
+     ('Seagate_ST1_Series', 1.0),
+     ('www.towerbancorp.com', 1.0),
+     ('OSI_Geospatial_Signs', 1.0)]
 
 
 

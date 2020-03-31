@@ -1,7 +1,10 @@
-Hello and welcome to my blog. 
+Tommaso Teofili
 
-![avatar](https://avatars2.githubusercontent.com/u/512815?s=460&v=4)
+<img src="https://avatars2.githubusercontent.com/u/512815?s=460&v=4" width="100"/>
 
-## This is still work in progress
+[Publications](https://scholar.google.it/citations?user=k2KiE1gAAAAJ&hl=it)
 
-Posts will appear after this file.
+[Deep Learning for Search](https://www.manning.com/books/deep-learning-for-search)
+
+## Posts
+

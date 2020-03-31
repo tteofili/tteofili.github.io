@@ -6,5 +6,3 @@ Tommaso Teofili
 
 [Deep Learning for Search](https://www.manning.com/books/deep-learning-for-search)
 
-## Posts
-

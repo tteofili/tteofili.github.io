@@ -434,7 +434,6 @@ def fi_pp(model, X, Y, a, b, mode='classification'):
         # err(a)+err(b)-err(a,b)
         return (2*score-a_score-b_score)-(score-ab_score)
     elif mode == 'regression':
-        #err(a,b)-(err(a)+err(b))
         return (score-ab_score)-(2*score-a_score-b_score)
     else:
         raise ValueError('unsupported mode '+str(mode))

@@ -1,4 +1,4 @@
-# Finding related papers on CORS dataset with S-BERT
+# Finding related papers on CORS dataset with Lucene, Anserini and S-BERT
 
 ```
 %cd

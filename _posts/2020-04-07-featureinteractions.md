@@ -477,25 +477,3 @@ plt.show()
 
 
 ![png](feature_interactions_files/feature_interactions_20_0.png)
-
-
-$H^2_{j}=\sum_{i=1}^n\left[\hat{f}(x^{(i)})-PD_j(x_j^{(i)})-PD_{-j}(x_{-j}^{(i)})\right]^2/\sum_{i=1}^n\hat{f}^2(x^{(i)})$
-
-
-```python
-#H. Friedman et al.: "PREDICTIVE LEARNING VIA RULE ENSEMBLES"
-from sklearn.inspection import partial_dependence
-from sklearn.inspection import plot_partial_dependence
-
-def h_stat(model, j, data):
-    jpd, jaxes = partial_dependence(model, data, j)
-    print(np.array(jaxes).shape)
-    not_j = []
-    for i in range(len(data[0])):
-        if not i == j[0]:
-            not_j.append(i)   
-    notj_pd, notj_axes = partial_dependence(model, data, not_j)
-    # TBC...
-    
-h_stat(rf, [0], np.array(X_train.values))
-```

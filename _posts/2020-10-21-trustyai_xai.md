@@ -7,7 +7,7 @@
 
 Nowadays AI based systems and decision services are widely used in industry in a wide range of domains, like financial services and health care.
 Such large adoption poses some concerns about how much we, as humans, can rely on these systems when they are involved in taking important decisions.
-Are such services fair whenk making decisions ? What are such systems giving importance to, when providing recommendations in supporting decision makers ? 
+Are such services fair when making decisions ? What are such systems giving importance to, when providing recommendations in supporting decision makers ? 
 All in all, can we trust them ?
 
 The above issues particularly affect machine learning techniques like deep learning which, more than others, are considered "opaque" as they're hard to interpret and understand.
@@ -17,7 +17,7 @@ If the system also highlights portions of the image that are responsible for the
 The highlighted portions of such an immage are an example of an *explanation*, an interface between the human and the system, a human understandable description of an (AI) system prediction internals.
 Depending on the system (and user) at hand, different kinds of explanations might work best. 
 For example a bank having an automated credit card request approval sytem may need to provide explanations too. 
-Imagine that the user compiles a form with information about economic situation and family.
+Imagine that the user compiles a form with information about its financial situation and family.
 If a user gets its credit card approval request rejected, one might want to know the rationale behind the rejection.
 
 ![Credit card rejection explanation](/images/ccreject_lime.png)
@@ -179,7 +179,7 @@ PredictionProvider model = inputs -> CompletableFuture.supplyAsync(() -> {
 });
 ```
 
-Now let's take an example input text, fir example _"italiani spaghetti pizza mandolino"_, and create a new `PredictionInput` to be passed to the model to obtain the `Prediction`.
+Now let's take an example input text, for example _"italiani spaghetti pizza mandolino"_, and create a new `PredictionInput` to be passed to the model to obtain the `Prediction`.
 Note that we have a single `String` of text, but since we'd like to understand what _words_ influence more the detected language, we create a _full text_ `Feature` so that each word in the input text becomes a separate `Feature` (hence the actual input will contain four `Features`, one for each word).
 
 ```java

@@ -212,5 +212,5 @@ for (FeatureImportance featureImportance : saliencyMap.get("lang").getPositiveFe
 
 ```terminal
 spaghetti: 0.021
-pizza:0.019
+pizza: 0.019
 ```

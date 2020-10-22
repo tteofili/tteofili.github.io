@@ -16,7 +16,7 @@ Say an [AI system to detect SARS-CoV-2 in chest x-ray images](https://github.com
 If the system also highlights portions of the image that are responsible for the final prediction, a doctor can more easily double check and decide if what the system is basing its output makes sense from the clinical perspective too and decide whether the prediction can be trusted.
 The highlighted portions of such an image are an example of an *explanation*, an interface between the human and the system, a human understandable description of an (AI) system prediction internals.
 Depending on the system (and user) at hand, different kinds of explanations might work best. 
-For example a bank having an automated credit card request approval sytem may need to provide explanations too. 
+For example a bank having an automated credit card request approval system may need to provide explanations too. 
 Imagine that the user compiles a form with information about its financial situation and family.
 If a user gets its credit card approval request rejected, one might want to know the rationale behind the rejection.
 
@@ -51,7 +51,7 @@ Once training is done, sparse feature weights are analyzed in order to correlate
 predictions, for example positive outputs are correlated to weights whose value is larger).
 
 In summary you can use LIME to generate explanations like the one from the picture above, that explains a single output (the credit card approval system rejection).
-This kind of explanations is usually referred to as a *local* explanation.
+This kind of explanation is usually referred to as a *local* explanation.
 Explanations that provide feature level importance scores on a single prediction are usually referred to as *saliency* explanations.
 
 ## TrustyAI Explainability

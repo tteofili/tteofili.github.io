@@ -84,7 +84,7 @@ Map<String, Saliency> saliencyMap = limeExplainer.explainAsync(prediction, model
 With respect to the original LIME implementation our own implementation doesn't require training data in case the input is in the form of tabular data.
 Actually our LIME implementation works seamlessly with plain text, tabular data and complex nested objects.
 
-## LIME for decision services
+## Explaining credit card approval decision service
 
 Suppose we have a [DMN](https://en.wikipedia.org/wiki/Decision_Model_and_Notation) model for the credit card approval system we discussed in the beginning of this post.
 Leveraging Kogito we can instantiate such a `DecisionModel` from its definition (a file stored under _/dmn/cc.dmn_).
@@ -138,7 +138,7 @@ Now we can see what are the top _n_ `Features` that were important for having ou
 ```java
 List<FeatureImportance> negativeFeatures = saliencyMap.get("Approved").getNegativeFeatures(2);
 for (FeatureImportance featureImportance : negativeFeatures) {
-  System.out.println(featureImportance.getFeature().getName()+": "+featureImportance.getScore());
+        System.out.println(featureImportance.getFeature().getName() + ": " + featureImportance.getScore());
 }
 ```
 
@@ -146,10 +146,71 @@ for (FeatureImportance featureImportance : negativeFeatures) {
 age: -0.61
 ownsCar: -0.55
 ```
+## Explaining language detection machine learning model
 
+Let's consider another example of explaining a machine learning classifier trained to detect the language of an input text.
+For this sake we load a pretrained [Apache OpenNLP](https://opennlp.apache.org) [LanguageDetector](http://opennlp.apache.org/docs/1.9.3/manual/opennlp.html#tools.langdetect) model (from a file called [langdetect-183.bin](https://www.apache.org/dyn/closer.cgi/opennlp/models/langdetect/1.8.3/langdetect-183.bin)).
 
+```java
+InputStream is = new FileInputStream("langdetect-183.bin");
+LanguageDetectorModel languageDetectorModel = new LanguageDetectorModel(is);
+LanguageDetector languageDetector = new LanguageDetectorME(languageDetectorModel);
+```
 
-## Explaining PMML model with LIME
-TBD
-## Explaining OpenNLP Language Detector with LIME
-TBD
+In order to make it possible to use it in the explainability API we wrap it as a `PredictionProvider`.
+We assume that all input `Features` are textual and we combine them together into a single `String` to be passed to the underlying `LanguageDetector`.
+
+```java
+PredictionProvider model = inputs -> CompletableFuture.supplyAsync(() -> {
+        List<PredictionOutput> results = new LinkedList<>();
+        for (PredictionInput predictionInput : inputs) {
+            StringBuilder builder = new StringBuilder();
+            for (Feature f : predictionInput.getFeatures()) {
+                if (builder.length() > 0) {
+                    builder.append(' ');
+                }
+                builder.append(f.getValue().asString());
+            }
+            Language language = languageDetector.predictLanguage(builder.toString());
+            PredictionOutput predictionOutput = new PredictionOutput(List.of(new Output("lang", Type.TEXT, new Value<>(language.getLang()), language.getConfidence())));
+            results.add(predictionOutput);
+        }
+        return results;
+});
+```
+
+Now let's take an example input text, fir example _"italiani spaghetti pizza mandolino"_, and create a new `PredictionInput` to be passed to the model to obtain the `Prediction`.
+Note that we have a single `String` of text, but since we'd like to understand what _words_ influence more the detected language, we create a _full text_ `Feature` so that each word in the input text becomes a separate `Feature` (hence the actual input will contain four `Features`, one for each word).
+
+```java
+String inputText = "italiani spaghetti pizza mandolino";
+List<Feature> features = new LinkedList<>();
+features.add(FeatureFactory.newFulltextFeature("text", inputText));
+```
+The detected language is _Italian_, with a confidence score of ~0.03.
+
+```java
+PredictionOutput output = model.predictAsync(List.of(input)).get().get(0);
+Output output = output.getOutputs().get(0);
+System.out.println(output.getValue().asString() + ": " + output.getScore();
+```
+
+```terminal
+ita: 0.029
+```
+
+Finally we can explain the `Prediction` using `LimeExplainer` and iterate through the most _positively_ influencing `Features`. 
+
+```java
+Prediction prediction = new Prediction(input, output);
+Map<String, Saliency> saliencyMap = limeExplainer.explainAsync(prediction, model)
+                    .get(Config.INSTANCE.getAsyncTimeout(), Config.INSTANCE.getAsyncTimeUnit());
+for (FeatureImportance featureImportance : saliencyMap.get("lang").getPositiveFeatures(2)) {
+        System.out.println(featureImportance.getFeature().getName() + ": " + featureImportance.getScore());
+}
+```
+
+```terminal
+spaghetti: 0.021
+pizza:0.019
+```

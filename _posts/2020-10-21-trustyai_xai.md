@@ -14,7 +14,7 @@ The above issues particularly affect machine learning techniques like deep learn
 By just looking at the inner workings (e.g. neurons' activations) of neural networks it is not easy to guess what the network is giving more importance to, when performing a prediction.
 Say an [AI system to detect SARS-CoV-2 in chest x-ray images](https://github.com/lindawangg/COVID-Net) predicts Covid-19 is present in one such image, can a doctor trust that enough to decide upon further treatment?
 If the system also highlights portions of the image that are responsible for the final prediction, a doctor can more easily double check and decide if what the system is basing its output makes sense from the clinical perspective too and decide whether the prediction can be trusted.
-The highlighted portions of such an immage are an example of an *explanation*, an interface between the human and the system, a human understandable description of an (AI) system prediction internals.
+The highlighted portions of such an image are an example of an *explanation*, an interface between the human and the system, a human understandable description of an (AI) system prediction internals.
 Depending on the system (and user) at hand, different kinds of explanations might work best. 
 For example a bank having an automated credit card request approval sytem may need to provide explanations too. 
 Imagine that the user compiles a form with information about its financial situation and family.

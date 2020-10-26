@@ -56,7 +56,11 @@ Explanations that provide feature level importance scores on a single prediction
 
 ## TrustyAI Explainability
 
-We recently worked on an [explainability library](https://github.com/kiegroup/kogito-apps/tree/master/explainability/explainability-core) in the `kogito-apps` repository.
+[Kogito](https://docs.jboss.org/kogito/release/latest/html_single/#con-kogito-automation_kogito-docs) is a cloud-native business automation technology for building cloud-ready business applications, with a focus on hybrid cloud scenarios.
+Kogito allows you to build and deploy a cloud application as the composition of different domain specific services. 
+In this context Kogito also provides a set of addons that you can include in a Kogito application.
+The [TrustyAI initiative](https://blog.kie.org/2020/06/trusty-ai-introduction.html) in Kogito provides a set of [services](https://docs.jboss.org/kogito/release/latest/html_single/#con-trusty-service_kogito-configuring) that aim to provide monitoring and explainability capabilities to such applications.
+We implemented an [explainability library](https://github.com/kiegroup/kogito-apps/tree/master/explainability/explainability-core) to deliver such services.
 You can use our own implementation of LIME by instantiating a `LimeExplainer`.
 
 ```java

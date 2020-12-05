@@ -1,0 +1,204 @@
+# Fine tuning DistilBERT model with titles from previous Red Hat Summit accepted talks.
+> This is a simple notebook inspired by [HF Transformers doc](https://github.com/huggingface/blog/blob/master/notebooks/01_how_to_train.ipynb) for fine tuning a DistilBERT model with a custom dataset.
+> This particular dataset will feature titles from talks accepted at Red Hat Summit 2019 and 2020. 
+
+```python
+import transformers
+```
+
+
+```python
+from transformers import DistilBertTokenizerFast
+from transformers import AutoModelForMaskedLM
+tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+model =   AutoModelForMaskedLM.from_pretrained('distilbert-base-uncased')
+```
+
+
+
+    
+
+
+
+```python
+filename = 'rhs_titles.txt'
+```
+
+
+```python
+from transformers import LineByLineTextDataset
+
+dataset = LineByLineTextDataset(
+    tokenizer=tokenizer,
+    file_path=filename,
+    block_size=128,
+)
+
+```
+
+
+```python
+from transformers import DataCollatorForLanguageModeling
+
+data_collator = DataCollatorForLanguageModeling(
+    tokenizer=tokenizer, mlm=True, mlm_probability=0.15
+)
+```
+
+
+```python
+from transformers import Trainer, TrainingArguments
+
+training_args = TrainingArguments(
+    output_dir="./rhsBERTo",
+    overwrite_output_dir=True,
+    num_train_epochs=10,
+    per_device_train_batch_size=64,
+    save_steps=10_000,
+    save_total_limit=2,
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    data_collator=data_collator,
+    train_dataset=dataset,
+)
+```
+
+
+```python
+trainer.train()
+```
+
+
+
+
+    <div>
+        <style>
+            /* Turns off some styling */
+            progress {
+                /* gets rid of default border in Firefox and Opera. */
+                border: none;
+                /* Needs to be in here for Safari polyfill so background images work as expected. */
+                background-size: auto;
+            }
+        </style>
+
+      <progress value='280' max='280' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [280/280 25:32, Epoch 10/10]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>Step</th>
+      <th>Training Loss</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table><p>
+
+
+
+
+
+    TrainOutput(global_step=280, training_loss=2.441347394670759)
+
+
+
+
+```python
+trainer.save_model("./rhsBERTo")
+```
+
+
+```python
+from transformers import pipeline
+
+fill_mask = pipeline(
+    "fill-mask",
+    model="./rhsBERTo/",
+    tokenizer="distilbert-base-uncased"
+)
+
+```
+
+
+```python
+fill_mask("Red Hat: [MASK]")
+```
+
+
+
+
+    [{'sequence': '[CLS] red hat : automation [SEP]',
+      'score': 0.07148709148168564,
+      'token': 19309,
+      'token_str': 'automation'},
+     {'sequence': '[CLS] red hat : introduction [SEP]',
+      'score': 0.06938037276268005,
+      'token': 4955,
+      'token_str': 'introduction'},
+     {'sequence': '[CLS] red hat : overview [SEP]',
+      'score': 0.0668490007519722,
+      'token': 19184,
+      'token_str': 'overview'},
+     {'sequence': '[CLS] red hat : integration [SEP]',
+      'score': 0.05286126583814621,
+      'token': 8346,
+      'token_str': 'integration'},
+     {'sequence': '[CLS] red hat : security [SEP]',
+      'score': 0.05181498825550079,
+      'token': 3036,
+      'token_str': 'security'}]
+
+
+
+
+```python
+import random
+def generate(n, start):
+    text = start
+    for i in range(n):
+        result = fill_mask(text + ' [MASK]')
+        text = result[random.randint(0, len(result) - 1)]['sequence']
+        text = text.replace('[CLS]','')
+        text = text.replace('[SEP]','')
+    return text
+```
+
+
+```python
+generate(5, 'red hat')
+```
+
+
+
+
+    ' red hat enterprise connect platform management tools '
+
+
+
+
+```python
+generate(5, 'natural language')
+```
+
+
+
+
+    ' natural language processing workshop 2 beta 7 '
+
+
+
+
+```python
+generate(7, '')
+```
+
+
+
+
+    ' security compliance monitoring services management automation platform '
+

@@ -931,7 +931,82 @@ altered_train.to_csv('inputs.csv')
 y_df.to_csv('target.csv')
 ```
 
-TBC
+At this point we can use TrustyAI library to generate PDPs for the PMML model.
+We load the PMML model using Kogito `kie-pmml-api` module and wrap it as a generic `PredictionProvider` using TrustyAI `explainability-core` library (from `kogito-apps`.
+
+```java
+PMMLRuntime pmmlRuntime = getPMMLRuntime(new File("sample.pmml"));
+
+PredictionProvider model = inputs -> CompletableFuture.supplyAsync(() -> {
+    List<PredictionOutput> outputs = new ArrayList<>();
+    for (PredictionInput input : inputs) {
+        Map<String, Object> map = new HashMap<>();
+        int i = 1;
+        for (Feature f : input.getFeatures()) {
+            map.put("x" + i, f.getValue().asNumber());
+            i++;
+        }
+        final PMMLRequestData pmmlRequestData = getPMMLRequestData("sampleRegressionModel0", map);
+        final PMMLContext pmmlContext = new PMMLContextImpl(pmmlRequestData);
+        PMML4Result pmml4Result = pmmlRuntime.evaluate("sampleRegressionModel0", pmmlContext);
+        Map<String, Object> resultVariables = pmml4Result.getResultVariables();
+        String zfya = "" + resultVariables.get("ZFYA");
+        PredictionOutput predictionOutput = new PredictionOutput(List.of(
+                new Output("ZFYA", Type.NUMBER, new Value(zfya), 1d)));
+        outputs.add(predictionOutput);
+    }
+    return outputs;
+});
+```
+
+Let's load the training data to obtain the data distribution we can use to generate partial dependence plots.
+
+```java
+List<Type> schema = new ArrayList<>(); // define the type of each feature in the training data
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+schema.add(Type.NUMBER);
+DataDistribution dataDistribution = DataUtils.readCSV(Paths.get("train.csv"), schema, true);
+```
+
+We can now instantiate a `PartialDependenceExplainer` (from `explainability-core`), that we'll use to generate PDPs.
+
+```java
+PartialDependencePlotExplainer explainer = new PartialDependencePlotExplainer();
+PredictionProviderMetadata metadata = new PredictionProviderMetadata() {
+    @Override
+    public DataDistribution getDataDistribution() {
+        return dataDistribution;
+    }
+...
+    @Override
+    public PredictionOutput getOutputShape() {
+        return new PredictionOutput(List.of(new Output("ZFYA", Type.NUMBER)));
+    }
+};
+```
+
+We can generate partial dependence plots for all the input features.
+
+```java
+List<PartialDependenceGraph> partialDependenceGraphs = explainer.explainFromMetadata(model, metadata);
+for (PartialDependenceGraph pdg : partialDependenceGraphs) {
+    DataUtils.toCSV(pdg, Paths.get(pdg.getFeature().getName() + "_" + pdg.getOutput().getName() + ".csv"));
+}
+```
+
+We now that UGPA (grade point average) and LSAT (entrance exam scores) features are likely to have a monotonicly increasingly impact on the expected average grade for a student's first year (ZFYA).
+Let's analyse the resulting PDP for such features:
+
 
 
 ## References

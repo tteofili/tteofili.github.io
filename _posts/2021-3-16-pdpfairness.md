@@ -1028,6 +1028,8 @@ In summary it seems this model is clearly positively biased towards white people
 Partial depdendence plots provide a very intuitive look into how the model treats a certain feature *in isolation* with respect to any other feature. 
 
 ## References
+[Partial Dependence Plots](https://christophm.github.io/interpretable-ml-book/pdp.html)
+
 [Greedy function approximation: A gradient boosting machine](https://www.researchgate.net/publication/2424824_Greedy_Function_Approximation_A_Gradient_Boosting_Machine)
 
 [The Fairness of Credit Scoring Models](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3785882)

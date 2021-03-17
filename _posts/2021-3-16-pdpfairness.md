@@ -1025,7 +1025,7 @@ In summary it seems this model is positively biased towards white people and neg
 ![png](/images/pdpfairness_files/mexican.png)
 ![png](/images/pdpfairness_files/puertorican.png)
 
-Partial depdendence plots provide a very intuitive look into how the model treats a certain feature *in isolation* with respect to any other feature. 
+Partial depdendence plots provide a very intuitive look into how the model treats a certain feature *in isolation* with respect to any other feature; this makes them particularly useful to look into potential fairness concerns.
 
 ## References
 

@@ -15,7 +15,7 @@ In this post we use _Partial Dependence Plots_ to visualize potential fairness c
 A partial dependence plot (or PDP) shows the marginal impact of one (or more) features on the predicted outcome of the model at hand.
 PDPs can show whether the relationship between the target and a given feature is linear, monotonic or more complex. 
 
-We leverage some of the nice work from Rui Vieira to analyze (Counterfactual Fairness)[https://ruivieira.dev/counterfactual-fairness.html].
+We leverage some of the nice work from Rui Vieira to analyze [Counterfactual Fairness](https://ruivieira.dev/counterfactual-fairness.html).
 
 We use the "law school" dataset which contains information on 21,790 law students.
 For each student it contains the following data: exam scores (LSAT), grade-point average (GPA) collected prior to law school, their first year average 

@@ -1012,13 +1012,13 @@ Let's analyse the resulting PDP for such features:
 
 The impact on the average grade is, as expected, growing both when LSAT and UGPA grow, in a linear fashion.
 
-Let's now look at the more sensitive features that indicate *race*, unfortunately the model seems clearly biased towards predicting higher grades for *white* people with respect to black people.
+Let's now look at the more sensitive features that indicate *race*, unfortunately the model seems biased towards predicting higher grades for *white* people with respect to *black* people.
 
 ![png](/images/pdpfairness_files/white.png)
 ![png](/images/pdpfairness_files/black.png)
 
-If we look closer at other etnicities we see the model is clearly unfair towards all of them. 
-In summary it seems this model is clearly positively biased towards white people and negatively biased towards anyone else. 
+If we look closer at other etnicities we see the model seems unfair towards all of them. 
+In summary it seems this model is positively biased towards white people and negatively biased towards anyone else. 
 
 ![png](/images/pdpfairness_files/hispanic.png)
 ![png](/images/pdpfairness_files/asian.png)

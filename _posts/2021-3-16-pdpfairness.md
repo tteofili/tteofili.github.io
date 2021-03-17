@@ -975,7 +975,7 @@ schema.add(Type.NUMBER);
 schema.add(Type.NUMBER);
 schema.add(Type.NUMBER);
 schema.add(Type.NUMBER);
-DataDistribution dataDistribution = DataUtils.readCSV(Paths.get("train.csv"), schema, true);
+DataDistribution dataDistribution = DataUtils.readCSV(Paths.get("inputs.csv"), schema, true);
 ```
 
 We can now instantiate a `PartialDependenceExplainer` (from `explainability-core`), that we'll use to generate PDPs.

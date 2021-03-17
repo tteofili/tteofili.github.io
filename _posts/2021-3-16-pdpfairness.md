@@ -1004,10 +1004,28 @@ for (PartialDependenceGraph pdg : partialDependenceGraphs) {
 }
 ```
 
-We now that UGPA (grade point average) and LSAT (entrance exam scores) features are likely to have a monotonicly increasingly impact on the expected average grade for a student's first year (ZFYA).
+We know that UGPA (grade point average) and LSAT (entrance exam scores) features are likely to have a monotonicly increasingly impact on the expected average grade for a student's first year (ZFYA).
 Let's analyse the resulting PDP for such features:
 
+![png](pdpfairness_files/ugpa.png)
+![png](pdpfairness_files/lsat.png)
 
+The impact on the average grade is, as expected, growing both when LSAT and UGPA grow, in a linear fashion.
+
+Let's now look at the more sensitive features that indicate *race*, unfortunately the model seems clearly biased towards predicting higher grades for *white* people with respect to black people.
+
+![png](pdpfairness_files/white.png)
+![png](pdpfairness_files/black.png)
+
+If we look closer at other etnicities we see the model is clearly unfair towards all of them. 
+In summary it seems this model is clearly positively biased towards white people and negatively biased towards anyone else. 
+
+![png](pdpfairness_files/hispanic.png)
+![png](pdpfairness_files/asian.png)
+![png](pdpfairness_files/mexican.png)
+![png](pdpfairness_files/puertorican.png)
+
+Partial depdendence plots provide a very intuitive look into how the model treats a certain feature *in isolation* with respect to any other feature. 
 
 ## References
 [Greedy function approximation: A gradient boosting machine](https://www.researchgate.net/publication/2424824_Greedy_Function_Approximation_A_Gradient_Boosting_Machine)

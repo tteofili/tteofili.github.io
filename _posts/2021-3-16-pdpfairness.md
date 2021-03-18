@@ -932,7 +932,7 @@ y_df.to_csv('target.csv')
 ```
 
 At this point we can use TrustyAI library to generate PDPs for the PMML model.
-We load the PMML model using Kogito `kie-pmml-api` module and wrap it as a generic `PredictionProvider` using TrustyAI `explainability-core` library (from `kogito-apps`.
+We load the PMML model using Kogito `kie-pmml-api` module and wrap it as a generic `PredictionProvider` using TrustyAI `explainability-core` library (from `kogito-apps`).
 
 ```java
 PMMLRuntime pmmlRuntime = getPMMLRuntime(new File("sample.pmml"));

@@ -136,10 +136,10 @@ Normalizing the saliency scores of the previous explanation in _\[0, 1\]_ would 
 We now observe that many words are reported as unimportant and the end user can more easily focus on what's important for the generated output.
 E.g., the four topmost important features are reported below: 
 ```
-{Feature{name='s4_8', type=text, value=$}, score=0.9997854483596491}
-{Feature{name='s4_11', type=text, value=hyperspace}, score=0.7791285862449742}
-{Feature{name='s4_10', type=text, value=the}, score=0.5992456973641895}
-{Feature{name='s4_3', type=text, value=need}, score=0.5788993190603644}
+{Feature{name='s4_8', type=text, value=$}, score=1.0}
+{Feature{name='s4_11', type=text, value=hyperspace}, score=0.7793588502081523}
+{Feature{name='s4_10', type=text, value=the}, score=0.5994300274219213}
+{Feature{name='s4_3', type=text, value=need}, score=0.579073863919113}
 ```
 
 Interestingly the saliency for _Tatooine_ has now become positive. This might sound wrong from the perspective of a faithful explanation, however it serves the users' need of understanding what has an influence on the prediction, regardless whether its influence is "positive" or "negative".

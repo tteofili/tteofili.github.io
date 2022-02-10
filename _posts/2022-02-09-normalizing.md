@@ -49,7 +49,7 @@ Now if we look at the saliency scores we'll get the following:
 
 
 As we can see, each word has been assigned a _saliency score_ which indicates how important it is for that specific prediction.
-For example, the most important token is the _'$'_ token, followed by _`hyperspace`_. These are the words that are most _responsible_ for the text being classified as spam.
+For example, the most important token is the _$_ token, followed by _hyperspace_. These are the words that are most _responsible_ for the text being classified as spam.
 However there is more information in the explanation: there are tokens which don't have any influence on the result (saliency score = 0), also there are some words having a negative importance for the prediction.
 Zero salient words are unimportant, that's straightforward.
 How can we interpret those negative scores ? 

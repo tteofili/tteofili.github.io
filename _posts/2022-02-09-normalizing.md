@@ -63,7 +63,7 @@ LIME saliency scores are the weights of a linear classifier trained on the neigh
 
 Concepts like the one of adversarial features are not very comfortable for non technical users, also varying scores' magnitudes might confuse users.
 To address these issues, one simple technique is to normalize the saliency scores, either in interval _\[-1, 1\]_ or _\[0, 1\]_.
-Note that we won't normalize zero-scores (an unimportant feature has to remain equally unimportant), on the other hand normalizing positive and negative weights in a shared range makes it easy to compare explanations across predictions.
+Normalizing positive and negative weights in a shared range makes it easy to compare explanations across predictions.
 Most importantly scores represent relative importance in a more consistent way.
 
 To normalize in the _\[-1, 1\]_ range the following code can be used: 
@@ -86,7 +86,31 @@ This would result in the following normalized saliency scores:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | -0.2424222447398524 | 0.15814772783822595 | -0.642992217317931 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2831345717454691 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -1.0 | -0.2859844346358621 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | 0.15814772783822595 | 0.15814772783822595 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | -0.2424222447398524 | 1.0 | -0.2831345717454691 | 0.19886005484384262 | 0.5587177004163046 | -0.2424222447398524 | 
 
-If, on the other hand, we want to mute _adversarial features_ to avoid confusing our users, we can also normalize in the _\[0, 1\]_ range as follows:
+As you can note, the most salient word _$_ has a score of _1_ while _hyperspace_ has a saliency score of _0.55_; for negatively weighted words like _Tatooine_ the saliency is still negative, however its relative importance as adversarial feature has been increased by the normalization procedure.
+You can observe that by comparing its score with the score for the word _hyperspace_: originally _hyperspace_ had an absolute magnitude bigger than _Tatooine_ (hyperspace:0.149 vs Tatooine:-0.07) while after normalization the absolute value of the saliency for _Tatooine_ is bigger than _hyperspace_ (hyperspace:0.55 vs Tatooine:-0.64). This happens because the negative space has been _"stretched"_ from _\[-0.14, 0\]_ (the token _get_ has the lowest score of _-0.14_ in the original saliency) to _\[-1, 0\]_; so if _0.14_ becomes _-1_ _-0.07_ (the score for _Tatooine_) becomes _0.64_. On the other hand this _"stretching"_ is less affecting the positive space _\[0, 1\]_ because the biggest unnormalized saliency score is _0.23_ which is closer to _1_ if we compare that with how _-0.07_ is close to _-1_.
+
+So while our saliency scores are better comparable as they all range between _-1_ and _1_, keep in mind that there might be similar such implications.
+Note also that words that were assigned a saliency of _0_ have been assigned a (negative) saliency of _-0.24_, this alters the semantics of the explanation and therefore we shouldn't allow it.
+We want unimportant features to keep being unimportant after normalization.
+To do that we can simply keep zero-salient features unchanged while performing normalization.
+
+```java
+
+double upper = 1;
+double lower = -1;
+double max = Arrays.stream(weights).max().orElse(upper);
+double min = Arrays.stream(weights).min().orElse(lower);
+if (max != min) {
+    for (int k = 0; k < weights.length; k++) {
+        if (weights[k] != 0) {
+            weights[k] = lower + (weights[k] - min)*(upper - lower) / (max - min);
+        }
+    }
+}
+
+```
+
+In addition, if we want to "mute" _adversarial features_ to avoid confusing our users, we can also normalize in the _\[0, 1\]_ range as follows:
 
 ```java
 
@@ -96,7 +120,9 @@ double max = Arrays.stream(weights).max().orElse(upper);
 double min = Arrays.stream(weights).min().orElse(lower);
 if (max != min) {
     for (int k = 0; k < weights.length; k++) {
-        weights[k] = (weights[k] - min) / (max - min);
+        if (weights[k] != 0) {
+            weights[k] = (weights[k] - min) / (max - min);
+        }
     }
 }
 ```
@@ -104,5 +130,14 @@ Normalizing the saliency scores of the previous explanation in _\[0, 1\]_ would 
 
 | greetings | from | Tatooine | we | reach | out | from | the | outer | hem | to | announce | you've | just | won | the | rebel | prize | you | will | get | empire | credits | for | free | you | just | need | to | send | us | 100 | $ | for | the | hyperspace | flight |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0.3787888776300738 | 0.579073863919113 | 0.1785038913410345 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.35843271412726546 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.0 | 0.35700778268206895 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.579073863919113 | 0.579073863919113 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 0.3787888776300738 | 1.0 | 0.35843271412726546 | 0.5994300274219213 | 0.7793588502081523 | 0.3787888776300738 | 
+| 0.0 | 0.579073863919113 | 0.1785038913410345 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.35843271412726546 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.35700778268206895 | 0.0 | 0.0 | 0.0 | 0.0 | 0.579073863919113 | 0.579073863919113 | 0.0 | 0.0 | 0.0 | 0.0 | 1.0 | 0.35843271412726546 | 0.5994300274219213 | 0.7793588502081523 | 0.0 |
+
+We now observe that many words are reported as unimportant and the end user can more easily focus on what's important for the generated output.
+E.g., the four topmost important features are reported below: 
+```
+{Feature{name='s4_8', type=text, value=$}, score=0.9997854483596491}
+{Feature{name='s4_11', type=text, value=hyperspace}, score=0.7791285862449742}
+{Feature{name='s4_10', type=text, value=the}, score=0.5992456973641895}
+{Feature{name='s4_3', type=text, value=need}, score=0.5788993190603644}
+```
 

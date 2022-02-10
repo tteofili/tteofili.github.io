@@ -141,6 +141,7 @@ E.g., the four topmost important features are reported below:
 {Feature{name='s4_3', type=text, value=need}, score=0.5788993190603644}
 ```
 
-Interestingly the saliency for _Tatooine_ has now become positive. This might sound wrong from the perspective of a faithful explanation, however it serves the user's need of understanding what has an influence on the prediction, regardless whether its influence is "positive" or "negative".
+Interestingly the saliency for _Tatooine_ has now become positive. This might sound wrong from the perspective of a faithful explanation, however it serves the users' need of understanding what has an influence on the prediction, regardless whether its influence is "positive" or "negative".
+
 In the end this is up to the type of user that needs to consume the explanation.
-Of course an expert user (e.g., a data scientist) might want to look at the original scores, while a non-expert would benefit from having a high level understanding of what's important and what's not, something liked a ranked list of important features (in descending order of influence).
+An expert user (e.g., a data scientist) might want to look at the original scores, while a non-expert one would benefit from having a high level understanding of what's important and what's not, something liked a ranked list of important features (in descending order of influence).

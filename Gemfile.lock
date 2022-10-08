@@ -16,7 +16,7 @@ GEM
     colorator (1.1.0)
     commonmarker (0.17.13)
       ruby-enum (~> 0.5)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.10)
     dnsruby (1.61.3)
       addressable (~> 2.5)
     em-websocket (0.5.1)
@@ -239,7 +239,7 @@ GEM
       thread_safe (~> 0.1)
     tzinfo-data (1.2019.3)
       tzinfo (>= 1.0.0)
-    unicode-display_width (1.6.0)
+    unicode-display_width (1.8.0)
     wdm (0.1.1)
     zeitwerk (2.6.1)
 
